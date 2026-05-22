@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Get API URL from environment variables or use default
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://task-manage-6g3c.onrender.com';
+// Production backend URL
+const API_BASE_URL = 'https://task-manage-6g3c.onrender.com';
 
 // Create axios instance with base configuration
 export const api = axios.create({
