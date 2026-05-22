@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Production backend URL
-const API_BASE_URL = 'https://task-manage-6g3c.onrender.com';
+// Backend API URL - production
+const BACKEND = 'https://task-manage-6g3c.onrender.com';
+const API_BASE_URL = BACKEND;
 
 // Create axios instance with base configuration
 export const api = axios.create({
