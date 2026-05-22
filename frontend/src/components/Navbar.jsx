@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, CheckSquare, Trash2, Settings } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../api/config';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -17,10 +17,7 @@ const Navbar = () => {
     if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete('http://localhost:5000/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete('/auth/me');
       handleLogout();
     } catch (error) {
       console.error('Error deleting account:', error);

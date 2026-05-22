@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../api/config';
 import { Building2, PlusCircle, CheckSquare, LogOut, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -13,7 +13,7 @@ const CompanyList = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/company');
+        const res = await api.get('/company');
         if (res.data.success) {
           setCompanies(res.data.companies);
         }

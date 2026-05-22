@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import io from 'socket.io-client';
+import { api, default as API_BASE_URL } from '../api/config';
 import Navbar from '../components/Navbar';
 import TaskCard from '../components/TaskCard';
 import TaskFormModal from '../components/TaskFormModal';
@@ -28,16 +28,9 @@ const Dashboard = () => {
 
   const socketRef = useRef(null);
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const token = localStorage.getItem('token');
 
-  // Setup Axios Headers
-  const authAxios = axios.create({
-    baseURL: 'http://localhost:5000/api',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
+  // Setup error handling for API calls
+  const authAxios = api;
   authAxios.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -93,7 +86,7 @@ const Dashboard = () => {
     fetchData();
 
     // Setup Socket connection
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io(API_BASE_URL);
 
     socketRef.current.on('connect', () => {
       console.log('Socket.IO connected to server');

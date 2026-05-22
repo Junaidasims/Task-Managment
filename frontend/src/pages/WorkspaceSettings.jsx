@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import io from 'socket.io-client';
+import { api, default as API_BASE_URL } from '../api/config';
 import { Building2, Users, Shield, ShieldOff, Trash2, Settings, Loader2, Save, Calendar } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -24,7 +24,7 @@ const WorkspaceSettings = () => {
     fetchWorkspaceDetails();
 
     // Setup Socket connection
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io(API_BASE_URL);
     
     socketRef.current.on('connect', () => {
       console.log('Socket connected');
@@ -52,10 +52,7 @@ const WorkspaceSettings = () => {
 
   const fetchWorkspaceDetails = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/company/workspace', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/company/workspace');
       if (res.data.success) {
         setCompany(res.data.company);
         setEditingName(res.data.company.name);
@@ -75,10 +72,7 @@ const WorkspaceSettings = () => {
     }
     setActionLoading('rename');
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.put('http://localhost:5000/api/company/name', { name: editingName }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.put('/company/name', { name: editingName });
       if (res.data.success) {
         setCompany(res.data.company);
         setIsEditing(false);
@@ -98,10 +92,7 @@ const WorkspaceSettings = () => {
     if (!window.confirm(`Are you sure you want to ${isBlocked ? 'unblock' : 'block'} this user?`)) return;
     setActionLoading(userId);
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.put(`http://localhost:5000/api/company/users/${userId}/block`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.put(`/company/users/${userId}/block`);
       if (res.data.success) {
         setUsers(users.map(u => u._id === userId ? { ...u, isBlocked: !u.isBlocked } : u));
       }
@@ -117,10 +108,7 @@ const WorkspaceSettings = () => {
     if (!window.confirm('Are you sure you want to permanently remove this user? This action cannot be undone.')) return;
     setActionLoading(userId);
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.delete(`http://localhost:5000/api/company/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.delete(`/company/users/${userId}`);
       if (res.data.success) {
         fetchWorkspaceDetails();
       }
@@ -135,10 +123,7 @@ const WorkspaceSettings = () => {
     if (!window.confirm('Are you sure you want to request account deletion? This will notify the creator for approval.')) return;
     setActionLoading('self_delete');
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.delete(`http://localhost:5000/api/company/users/${currentUser.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.delete(`/company/users/${currentUser.id}`);
       if (res.data.success) {
         alert('Deletion request sent. Your account will be removed after creator approval.');
         localStorage.clear();
@@ -153,16 +138,10 @@ const WorkspaceSettings = () => {
 
   // Approve pending deletion (creator)
   const approvePendingDeletion = async (userId) => {
-    console.log('Approving deletion for user:', userId);
     setActionLoading(userId.toString());
     try {
-      const token = localStorage.getItem('token');
-      console.log('Token:', token);
-      console.log('API URL:', `http://localhost:5000/api/company/users/${userId}/force`);
-      
-      const res = await axios.delete(`http://localhost:5000/api/company/users/${userId}/force`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      console.log('Approving deletion for user:', userId);
+      const res = await api.delete(`/company/users/${userId}/force`);
       
       console.log('Response:', res.data);
       
@@ -193,10 +172,7 @@ const WorkspaceSettings = () => {
 
     setActionLoading('delete_company');
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.delete('http://localhost:5000/api/company/delete-company', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.delete('/company/delete-company');
       if (res.data.success) {
         alert('Company has been successfully removed by the creator.');
         localStorage.clear();

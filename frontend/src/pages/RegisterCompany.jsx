@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../api/config';
 import { Building2, Sparkles, AlertCircle, Loader2, CheckSquare } from 'lucide-react';
 
 const RegisterCompany = () => {
@@ -27,11 +27,7 @@ const RegisterCompany = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/company/register', 
-        { name },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.post('/company/register', { name });
       if (response.data.success) {
         // Update user context to reflect the new company
         user.company = response.data.company.name;
