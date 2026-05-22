@@ -1,0 +1,16 @@
+{
+  "name": "task-manager-root",
+  "version": "1.0.0",
+  "description": "Root workspace to manage full-stack Task Management application.",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
